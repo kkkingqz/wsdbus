@@ -11,6 +11,7 @@ The GNOME provider of the `Desktop1` contract (`spec/`). UUID
 | `lib/contract.js` | names, fact rules, command checks, `app.id` and sandbox rules |
 | `lib/store.js` | state with one revision |
 | `lib/wire.js` | GLib.Variant encoding |
+| `lib/keycodes.js` | keysym names to US layout positions |
 | `lib/keys.js` | keys held through `Key`, released when the caller leaves or the screen locks |
 | `lib/probe.js` | sandbox evidence of a caller from `/proc` |
 | `io.github.kkkingqz.WsDbus.Desktop1.xml` | copy of the spec XML; a test keeps them equal |
@@ -26,7 +27,7 @@ The GNOME provider of the `Desktop1` contract (`spec/`). UUID
 | `display.brightness`, `SetBrightness` | `Main.brightnessManager.globalScale`; absent and `Unsupported` without a backlight |
 | `keyboard.layout` | input source manager, id of the current source |
 | windows | normal and dialog windows outside `skip-taskbar`; id from `get_stable_sequence()`; `floating` is always true |
-| `Shortcut`, `Key` | Clutter virtual keyboard; key names resolve through `Clutter.KEY_*`, `XF86Foo` as `KEY_Foo` |
+| `Shortcut`, `Key` | Clutter virtual keyboard. Keys of the main block (letters, digits, punctuation, modifiers, F-keys, navigation) are sent as evdev codes of their US layout position (`lib/keycodes.js`), so shortcuts work under any active layout; other names resolve through `Clutter.KEY_*`, `XF86Foo` as `KEY_Foo` |
 | `LaunchApp` | `Shell.AppSystem` lookup of `ID.desktop`, then `activate()` |
 | `SetWorkspaceMode` | not offered (W18) |
 

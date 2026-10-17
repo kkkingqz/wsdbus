@@ -53,6 +53,8 @@ gsettings set org.gnome.shell disable-user-extensions false
 gsettings set org.gnome.shell enabled-extensions "[\"wsdbus@kkkingqz.github.io\"]"
 gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 gsettings set org.gnome.desktop.interface accent-color teal
+# A Cyrillic layout first: Latin shortcuts must still reach the window.
+gsettings set org.gnome.desktop.input-sources sources "[(\"xkb\", \"ru\"), (\"xkb\", \"us\")]"
 gnome-shell --headless --wayland --no-x11 --virtual-monitor 1280x800 >"$log" 2>&1 &
 shell=$!
 for _ in $(seq 100); do "$CTL" info >/dev/null 2>&1 && break; sleep 0.1; done
@@ -81,7 +83,7 @@ check info 0 "$CTL" info; has provider "provider gnome"
 check state 0 "$CTL" --json state
 has scheme "\"appearance.scheme\":\"dark\""; has accent "\"appearance.accent\":\"#2190a4\""
 has locked "\"session.locked\":false"; has workspaces "\"workspaces\":\[{"
-has layout "\"keyboard.layout\":"
+has layout "\"keyboard.layout\":\"ru\""
 lacks "no brightness without a backlight" "display.brightness"
 check "brightness unsupported" 4 "$CTL" brightness 0.5
 check "unknown workspace" 2 "$CTL" workspace 99
@@ -121,6 +123,11 @@ check "focused app shortcut" 0 "$CTL" shortcut --app org.gnome.Calculator Escape
 check close 0 "$CTL" window "$id" close
 wait_for "window gone" "\"windows\":\[\]" "$CTL" --json windows
 check "closed window is stale" 5 "$CTL" window "$id" activate
+check "launch again" 0 "$CTL" launch org.gnome.Calculator
+wait_for "window again" "\"app\":\"org.gnome.Calculator\"" "$CTL" --json windows
+wait_for "focus again" "\"focus.app\":\"org.gnome.Calculator\"" "$CTL" --json state
+check "Ctrl+Q under ru" 0 "$CTL" shortcut --app org.gnome.Calculator Control_L q
+wait_for "shortcut closed the app" "\"windows\":\[\]" "$CTL" --json windows
 kill $watch
 if grep -q "\"facts\":{\"appearance.scheme\":\"dark\"}" "$XDG_STATE_HOME/watch"; then echo "PASS watch facts"
 else echo "FAIL watch facts"; cat "$XDG_STATE_HOME/watch"; failed=1; fi
@@ -145,6 +152,7 @@ check "state while locked" 0 "$CTL" state
 
 kill $shell; wait $shell 2>/dev/null
 if grep -i "wsdbus" "$log" | grep -iE "error|warn|exception|fail"; then echo "FAIL shell log"; failed=1; fi
+if grep "No keycode found" "$log"; then echo "FAIL keys lost in the layout"; failed=1; fi
 if [ $failed = 0 ]; then echo "headless: all passed"
 else echo "--- shell log"; grep -vE "^dbus-daemon" "$log" | tail -40; fi
 exit $failed

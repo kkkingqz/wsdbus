@@ -7,22 +7,22 @@ export class HeldKeys {
     }
 
     /** Records a press; false when this caller already holds the key. */
-    press(sender, keyval) {
+    press(sender, key) {
         let keys = this._held.get(sender);
         if (!keys) {
             keys = [];
             this._held.set(sender, keys);
         }
-        if (keys.includes(keyval))
+        if (keys.includes(key))
             return false;
-        keys.push(keyval);
+        keys.push(key);
         return true;
     }
 
     /** Records a release; false when this caller did not hold the key. */
-    release(sender, keyval) {
+    release(sender, key) {
         const keys = this._held.get(sender);
-        const index = keys ? keys.indexOf(keyval) : -1;
+        const index = keys ? keys.indexOf(key) : -1;
         if (index < 0)
             return false;
         keys.splice(index, 1);
@@ -42,12 +42,12 @@ export class HeldKeys {
         return keys.reverse();
     }
 
-    /** Forgets every caller; returns [sender, keyval] pairs to release. */
+    /** Forgets every caller; returns [sender, key] pairs to release. */
     releaseAll() {
         const pairs = [];
         for (const sender of [...this._held.keys()]) {
-            for (const keyval of this.releaseSender(sender))
-                pairs.push([sender, keyval]);
+            for (const key of this.releaseSender(sender))
+                pairs.push([sender, key]);
         }
         return pairs;
     }

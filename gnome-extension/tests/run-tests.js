@@ -3,7 +3,7 @@
 
 import System from 'system';
 
-const SUITES = ['contract', 'store', 'wire', 'keys', 'spec'];
+const SUITES = ['contract', 'store', 'wire', 'keys', 'keycodes', 'spec'];
 
 let count = 0;
 for (const suite of ARGV.length ? ARGV : SUITES) {

@@ -15,6 +15,7 @@ import {
     ACCENT_COLORS, BUS_NAME, OBJECT_PATH, Rejection, VERSION, admit,
     gnomeCapabilities, keyvalForName, normalizeAppId, schemeFromColorScheme,
 } from './contract.js';
+import {keyFromToken, keyToken, resolveKey} from './keycodes.js';
 import {HeldKeys} from './keys.js';
 import {callerVerdict} from './probe.js';
 import {Store} from './store.js';
@@ -389,12 +390,12 @@ export class Provider {
         }
     }
 
-    _keyvals(names) {
+    _resolve(names) {
         return names.map(name => {
-            const keyval = keyvalForName(name, Clutter);
-            if (keyval === null)
+            const key = resolveKey(name, Clutter, keyvalForName);
+            if (!key)
                 throw new Rejection('invalid-args', `unknown key ${name}`);
-            return keyval;
+            return key;
         });
     }
 
@@ -406,31 +407,35 @@ export class Provider {
         return this._virtualKeyboard;
     }
 
-    _notifyKey(keyval, pressed) {
-        this._keyboard().notify_keyval(GLib.get_monotonic_time(), keyval,
-            pressed ? Clutter.KeyState.PRESSED : Clutter.KeyState.RELEASED);
+    _notifyKey(key, pressed) {
+        const state = pressed ? Clutter.KeyState.PRESSED : Clutter.KeyState.RELEASED;
+        if (key.code !== undefined)
+            this._keyboard().notify_key(GLib.get_monotonic_time(), key.code, state);
+        else
+            this._keyboard().notify_keyval(GLib.get_monotonic_time(), key.keyval, state);
     }
 
     _shortcut({keys, app}) {
-        const keyvals = this._keyvals(keys);
+        const resolved = this._resolve(keys);
         const focus = global.display.focus_window;
         if (app !== undefined && (!focus || this._appId(focus) !== app))
             return;
-        for (const keyval of keyvals)
-            this._notifyKey(keyval, true);
-        for (const keyval of [...keyvals].reverse())
-            this._notifyKey(keyval, false);
+        for (const key of resolved)
+            this._notifyKey(key, true);
+        for (const key of [...resolved].reverse())
+            this._notifyKey(key, false);
     }
 
     _key({key, pressed}, sender) {
-        const [keyval] = this._keyvals([key]);
+        const [resolved] = this._resolve([key]);
+        const token = keyToken(resolved);
         if (pressed) {
-            if (this._held.press(sender, keyval)) {
+            if (this._held.press(sender, token)) {
                 this._watchSender(sender);
-                this._notifyKey(keyval, true);
+                this._notifyKey(resolved, true);
             }
-        } else if (this._held.release(sender, keyval)) {
-            this._notifyKey(keyval, false);
+        } else if (this._held.release(sender, token)) {
+            this._notifyKey(resolved, false);
         }
     }
 
@@ -440,8 +445,8 @@ export class Provider {
             return;
         const id = Gio.bus_watch_name_on_connection(Gio.DBus.session, sender,
             Gio.BusNameWatcherFlags.NONE, null, () => {
-                for (const keyval of this._held.releaseSender(sender))
-                    this._notifyKey(keyval, false);
+                for (const token of this._held.releaseSender(sender))
+                    this._notifyKey(keyFromToken(token), false);
                 Gio.bus_unwatch_name(id);
                 this._senderWatches.delete(sender);
             });
@@ -449,8 +454,8 @@ export class Provider {
     }
 
     _releaseAllKeys() {
-        for (const [, keyval] of this._held.releaseAll())
-            this._notifyKey(keyval, false);
+        for (const [, token] of this._held.releaseAll())
+            this._notifyKey(keyFromToken(token), false);
     }
 
     _windowAction({id, action}) {
