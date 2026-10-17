@@ -32,6 +32,22 @@ implemented; integration with the consumers is next. Plans, decisions and the co
 | `crates/wsdbus-fake` | fake provider and a private `dbus-daemon` for consumer tests |
 | `bin/wsdbus-ctl` | command-line client; `watch --json` for QML consumers |
 | `gnome-extension/` | GNOME Shell 50 provider, see its [README](gnome-extension/README.md) |
+| `flake.nix`, `nix/` | packages `ctl` and `gnome-extension`, the Home Manager module |
+
+## Nix
+
+```nix
+inputs.wsdbus.url = "github:kkkingqz/wsdbus";
+# Home Manager:
+imports = [ inputs.wsdbus.homeManagerModules.default ];
+programs.wsdbus.enable = true;
+```
+
+The module installs `wsdbus-ctl` and the GNOME extension (`programs.wsdbus.gnome`,
+on by default) but does not enable it: the owner of `enabled-extensions` adds
+`programs.wsdbus.extensionUuid`. `programs.wsdbus.ctl` is the absolute path of
+`wsdbus-ctl` for services and scripts without the profile in `PATH`.
+`nix flake check` builds both packages and runs the Rust and GJS tests.
 
 ## Checks
 
@@ -41,8 +57,8 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
 ```
 
-The tests start their own `dbus-daemon` and never use the session bus;
-`dbus-daemon` must be installed. The extension has GJS tests and a headless
+The tests start their own `dbus-daemon` with their own configuration and never
+use the session bus; `dbus-daemon` must be in `PATH`. The extension has GJS tests and a headless
 GNOME Shell test, see [docs/testing.md](docs/testing.md) (in Russian).
 
 ## License
