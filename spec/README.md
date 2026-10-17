@@ -103,6 +103,8 @@ Hyprland — из `stableId` и подписи экземпляра.
 | `ActivateWorkspace(s id)` | перейти на стол |
 | `WindowAction(s id, s action)` | `activate`, `close`, `minimize`, `restore`, `toggle-maximize` |
 | `SetWorkspaceMode(s id, s mode)` | `tiling` или `floating`; только Hyprland с `policy` |
+| `Key(s key, b pressed)` | нажать (`true`) или отпустить (`false`) одну клавишу; имя — XKB keysym (`Escape`, `F5`, `XF86AudioPlay`, `XF86MonBrightnessUp`). Для поверхностей без своего ввода клавиш (wstouchbar). Клавиши, которые вызывающий не отпустил, поставщик отпускает сам, когда вызывающий уходит с шины или экран блокируется |
+| `SetBrightness(d level)` | яркость экрана от 0.0 до 1.0; та же возможность, что и факт `display.brightness` |
 
 Перемещения, размера и геометрии окон в v1 нет.
 
@@ -110,12 +112,12 @@ Hyprland — из `stableId` и подписи экземпляра.
 
 | Порядок | Проверка | Ошибка |
 |---|---|---|
-| 1 | аргументы: пустой id, пустой `app` при его наличии, число и вид клавиш, неизвестное действие или режим | `org.freedesktop.DBus.Error.InvalidArgs` |
+| 1 | аргументы: пустой id, пустой `app` при его наличии, число и вид клавиш, неизвестное действие или режим, уровень яркости вне 0.0–1.0 | `org.freedesktop.DBus.Error.InvalidArgs` |
 | 2 | вызывающий не в песочнице | `io.github.kkkingqz.WsDbus.Error.Denied` |
 | 3 | метод в `Capabilities`, действие поддерживается | `io.github.kkkingqz.WsDbus.Error.Unsupported` |
-| 4 | экран не заблокирован — только `Shortcut` и `LaunchApp` | `io.github.kkkingqz.WsDbus.Error.Locked` |
+| 4 | экран не заблокирован — только `Shortcut`, `LaunchApp` и нажатие в `Key` (отпускание разрешено всегда) | `io.github.kkkingqz.WsDbus.Error.Locked` |
 | 5 | окно с этим id есть | `io.github.kkkingqz.WsDbus.Error.StaleWindow` |
-| 5 | стол или приложение с этим id есть | `org.freedesktop.DBus.Error.InvalidArgs` |
+| 5 | стол, приложение или клавиша с этим именем есть | `org.freedesktop.DBus.Error.InvalidArgs` |
 
 Проверки 1–4 — функция `admit` в `wsdbus-contract`; поставщик на другом языке
 повторяет их в том же порядке.
@@ -165,3 +167,6 @@ desktop-файла. Пробелы по краям отбрасываются. �
 Коды выхода: 0 — успех, 1 — ошибка шины или протокола, 2 — неверный вызов или
 `InvalidArgs`, 3 — нет поставщика, 4 — `Unsupported`, 5 — `StaleWindow`,
 6 — `Locked`, 7 — `Denied`.
+
+Команды `wsdbus-ctl` для новых методов: `key KEY press|release`,
+`brightness LEVEL`.

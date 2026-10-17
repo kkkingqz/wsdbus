@@ -35,6 +35,13 @@
       <arg name="id" type="s" direction="in"/>
       <arg name="mode" type="s" direction="in"/>
     </method>
+    <method name="Key">
+      <arg name="key" type="s" direction="in"/>
+      <arg name="pressed" type="b" direction="in"/>
+    </method>
+    <method name="SetBrightness">
+      <arg name="level" type="d" direction="in"/>
+    </method>
     <signal name="StateChanged">
       <arg name="revision" type="t"/>
       <arg name="changed" type="a{sv}"/>

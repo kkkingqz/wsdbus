@@ -177,6 +177,8 @@ impl Client {
             }
             Command::WindowAction { id, action } => self.call(method, &(id, action.name())).await,
             Command::SetWorkspaceMode { id, mode } => self.call(method, &(id, mode.name())).await,
+            Command::Key { key, pressed } => self.call(method, &(key, *pressed)).await,
+            Command::SetBrightness { level } => self.call(method, &(*level,)).await,
         }
     }
 

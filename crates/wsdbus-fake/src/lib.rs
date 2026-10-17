@@ -138,7 +138,15 @@ impl Service {
     fn perform(&mut self, command: &Command) -> Result<Vec<Change>, Rejection> {
         let mut changes = Vec::new();
         match command {
-            Command::Shortcut { .. } | Command::LaunchApp { .. } => {}
+            Command::Shortcut { .. } | Command::LaunchApp { .. } | Command::Key { .. } => {}
+            Command::SetBrightness { level } => {
+                let facts = Facts::from([(FactKey::DisplayBrightness, FactValue::Number(*level))]);
+                changes.extend(
+                    self.store
+                        .update_facts(facts, &[])
+                        .expect("valid brightness"),
+                );
+            }
             Command::WindowAction { id, action } => {
                 let Some(window) = self.store.window(id).cloned() else {
                     return Err(Rejection::new(
@@ -354,6 +362,29 @@ impl Service {
             &emitter,
         )
         .await
+    }
+
+    async fn key(
+        &mut self,
+        key: String,
+        pressed: bool,
+        #[zbus(connection)] conn: &Connection,
+        #[zbus(header)] header: Header<'_>,
+        #[zbus(signal_emitter)] emitter: SignalEmitter<'_>,
+    ) -> Result<(), ProviderError> {
+        self.execute(Command::Key { key, pressed }, conn, &header, &emitter)
+            .await
+    }
+
+    async fn set_brightness(
+        &mut self,
+        level: f64,
+        #[zbus(connection)] conn: &Connection,
+        #[zbus(header)] header: Header<'_>,
+        #[zbus(signal_emitter)] emitter: SignalEmitter<'_>,
+    ) -> Result<(), ProviderError> {
+        self.execute(Command::SetBrightness { level }, conn, &header, &emitter)
+            .await
     }
 
     #[zbus(signal)]

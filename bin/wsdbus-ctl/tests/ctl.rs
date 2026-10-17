@@ -114,6 +114,10 @@ fn exit_codes() {
         assert_eq!(status(&bus, &["workspace", "9"]), 2);
         assert_eq!(status(&bus, &["mode", "1", "floating"]), 4);
         assert_eq!(status(&bus, &["window", "9", "close"]), 5);
+        assert_eq!(status(&bus, &["key", "F5", "press"]), 0);
+        assert_eq!(status(&bus, &["key", "F5", "hold"]), 2);
+        assert_eq!(status(&bus, &["brightness", "0.5"]), 0);
+        assert_eq!(status(&bus, &["brightness", "2"]), 2);
         first
             .update_facts(
                 Facts::from([(FactKey::SessionLocked, FactValue::Bool(true))]),

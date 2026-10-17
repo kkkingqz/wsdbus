@@ -25,6 +25,8 @@ Commands:
   window ID ACTION             activate, close, minimize, restore or
                                toggle-maximize a window
   mode WORKSPACE MODE          set a workspace to tiling or floating
+  key KEY press|release        press or release one key (XKB keysym name)
+  brightness LEVEL             set the screen brightness, 0.0 to 1.0
 
 Options:
   --json   one JSON object per line
@@ -147,6 +149,25 @@ fn parse(args: &[String]) -> Result<(Request, bool), Usage> {
                 id: rest[0].clone(),
                 mode,
             })
+        }
+        "key" => {
+            exact(2)?;
+            let pressed = match rest[1].as_str() {
+                "press" => true,
+                "release" => false,
+                other => return Err(Usage(format!("expected press or release, not {other}"))),
+            };
+            Request::Command(Command::Key {
+                key: rest[0].clone(),
+                pressed,
+            })
+        }
+        "brightness" => {
+            exact(1)?;
+            let level = rest[0]
+                .parse()
+                .map_err(|_| Usage(format!("not a number: {}", rest[0])))?;
+            Request::Command(Command::SetBrightness { level })
         }
         other => return Err(Usage(format!("unknown command {other}"))),
     };

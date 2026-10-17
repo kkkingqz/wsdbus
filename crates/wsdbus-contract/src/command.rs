@@ -38,7 +38,7 @@ impl WindowAction {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Command {
     /// Press `keys` in order and release them in reverse order. With `app`,
     /// only while that app is in focus; otherwise nothing happens.
@@ -61,16 +61,29 @@ pub enum Command {
         id: String,
         mode: WorkspaceMode,
     },
+    /// Press or release one key, for surfaces without their own key input.
+    /// The provider releases keys a caller still holds when the caller
+    /// leaves the bus or the screen locks.
+    Key {
+        key: String,
+        pressed: bool,
+    },
+    /// Set the screen brightness, 0.0 to 1.0.
+    SetBrightness {
+        level: f64,
+    },
 }
 
 impl Command {
     /// Method names, which are also the command capability names.
-    pub const METHODS: [&'static str; 5] = [
+    pub const METHODS: [&'static str; 7] = [
         "Shortcut",
         "LaunchApp",
         "ActivateWorkspace",
         "WindowAction",
         "SetWorkspaceMode",
+        "Key",
+        "SetBrightness",
     ];
 
     pub fn method(&self) -> &'static str {
@@ -80,13 +93,21 @@ impl Command {
             Command::ActivateWorkspace { .. } => "ActivateWorkspace",
             Command::WindowAction { .. } => "WindowAction",
             Command::SetWorkspaceMode { .. } => "SetWorkspaceMode",
+            Command::Key { .. } => "Key",
+            Command::SetBrightness { .. } => "SetBrightness",
         }
     }
 
     /// Commands that act on behalf of the user in an app; rejected with
-    /// `Locked` while the screen is locked.
+    /// `Locked` while the screen is locked. Releasing a key is always
+    /// allowed.
     pub fn blocked_when_locked(&self) -> bool {
-        matches!(self, Command::Shortcut { .. } | Command::LaunchApp { .. })
+        matches!(
+            self,
+            Command::Shortcut { .. }
+                | Command::LaunchApp { .. }
+                | Command::Key { pressed: true, .. }
+        )
     }
 
     /// Checks the arguments; failure is `InvalidArgs`.
@@ -106,6 +127,20 @@ impl Command {
                     return Err("empty app; use no app instead".into());
                 }
                 Ok(())
+            }
+            Command::Key { key, .. } => {
+                if key.is_empty() || key.contains(char::is_whitespace) {
+                    Err("empty key name or key name with spaces".into())
+                } else {
+                    Ok(())
+                }
+            }
+            Command::SetBrightness { level } => {
+                if level.is_finite() && (0.0..=1.0).contains(level) {
+                    Ok(())
+                } else {
+                    Err("expected a level from 0.0 to 1.0".into())
+                }
             }
             Command::LaunchApp { id }
             | Command::ActivateWorkspace { id }

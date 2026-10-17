@@ -303,7 +303,32 @@ fn commands_and_errors() {
             action: WindowAction::Minimize,
         };
         assert_eq!(rejected(&client, minimize.clone()).await, None);
-        assert_eq!(fake.commands().await, [launch, shortcut, minimize]);
+        let press = Command::Key {
+            key: "Escape".into(),
+            pressed: true,
+        };
+        let release = Command::Key {
+            key: "Escape".into(),
+            pressed: false,
+        };
+        assert_eq!(rejected(&client, press).await, Some(ErrorKind::Locked));
+        assert_eq!(rejected(&client, release.clone()).await, None);
+        let too_bright = Command::SetBrightness { level: 1.5 };
+        assert_eq!(
+            rejected(&client, too_bright).await,
+            Some(ErrorKind::InvalidArgs)
+        );
+        let dim = Command::SetBrightness { level: 0.25 };
+        assert_eq!(rejected(&client, dim.clone()).await, None);
+        let (_, facts) = client.state().await.unwrap();
+        assert_eq!(
+            facts.value[&FactKey::DisplayBrightness],
+            FactValue::Number(0.25)
+        );
+        assert_eq!(
+            fake.commands().await,
+            [launch, shortcut, minimize, release, dim]
+        );
     });
 }
 
