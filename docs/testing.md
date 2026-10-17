@@ -37,3 +37,26 @@ Flatpak читает факты, а `launch`, `key`, `shortcut` получают
    — код 7, `state` работает.
 9. Отключить и включить расширение: `watch` показывает `lost`, затем новый
    снимок.
+10. Под русской раскладкой повторить шаг 6 (открыто: до `ffdfbb4` вкладка не
+    открывалась; после повторного входа проверить снова).
+
+## Этап 3: потребители (mbp16)
+
+После `ws apply` с ядром wsconfig `69d021b` и выше (с подтверждения
+владельца). Расширение wsdbus теперь ставит Home Manager ссылками в store;
+до повторного входа работает прежняя копия, она того же кода.
+
+1. `wsdbus-ctl info` (из профиля) и `~/.local/share/wsconfig/libexec/ws-window check`
+   — `wsdbus provider: windows, WindowAction`.
+2. Сочетания `ws-window` (раскладка macOS): Command+H — окна приложения в
+   фокусе свёрнуты; Option+Command+H — свёрнуты остальные; Option+Command+W
+   — окна приложения закрыты, окно в фокусе последним; Option+Command+M —
+   как Command+H.
+3. `systemctl --user show workstation-widgets -p Environment` содержит
+   `WIDGETS_DESKTOP_CTL`; открыть виджет на панели и заблокировать экран —
+   после разблокировки popup закрыт.
+4. После проверки 2: убрать `window-control@carlo9890.github.io` из
+   `~/wsconfig/gnome/config.toml`, `ws apply`, повторить 2. Файлы прежних
+   расширений убрать: `gnome-extensions uninstall window-control@carlo9890.github.io`,
+   `gnome-extensions uninstall window-monitor-pro@muhammed.hussien2030.gmail.com`.
+5. `ws check` — зелёный.

@@ -12,8 +12,8 @@ daemon for Hyprland.
   (`provider` always on, `policy` optional: floating workspaces,
   minimize/restore, maximize, snapping).
 
-Status: plan 1 stages 1 (contract) and 2 (GNOME provider) are
-implemented; integration with the consumers is next. Plans, decisions and the contract (in Russian):
+Status: plan 1 stages 1 (contract), 2 (GNOME provider) and 3 (Nix, wsconfig
+`ws-window`, wswidgets) are implemented; the live check of stage 3 is next. Plans, decisions and the contract (in Russian):
 
 - [contract `Desktop1`](spec/README.md) and its
   [D-Bus interface](spec/io.github.kkkingqz.WsDbus.Desktop1.xml);
