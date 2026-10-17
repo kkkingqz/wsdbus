@@ -13,7 +13,8 @@ daemon for Hyprland.
   minimize/restore, maximize, snapping).
 
 Status: plan 1 stages 1 (contract), 2 (GNOME provider) and 3 (Nix, wsconfig
-`ws-window`, wswidgets) are implemented; the live check of stage 3 is next. Plans, decisions and the contract (in Russian):
+`ws-window`, wswidgets) are implemented and checked on the workstation; only a retest of `Shortcut`
+under a Cyrillic layout is open. Plans, decisions and the contract (in Russian):
 
 - [contract `Desktop1`](spec/README.md) and its
   [D-Bus interface](spec/io.github.kkkingqz.WsDbus.Desktop1.xml);
