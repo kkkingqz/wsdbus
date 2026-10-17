@@ -13,3 +13,7 @@ daemon for Hyprland.
 
 Status: planning. The plan (in Russian):
 [docs/plans/2026-10-17-wsdbus.md](docs/plans/2026-10-17-wsdbus.md).
+
+## License
+
+[MIT](LICENSE).
