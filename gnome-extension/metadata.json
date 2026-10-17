@@ -1,0 +1,14 @@
+{
+  "uuid": "wsdbus@kkkingqz.github.io",
+  "name": "wsdbus",
+  "description": "Desktop facts, windows and commands over the wsdbus D-Bus contract (io.github.kkkingqz.WsDbus.Desktop1).",
+  "url": "https://github.com/kkkingqz/wsdbus",
+  "shell-version": [
+    "50"
+  ],
+  "session-modes": [
+    "user",
+    "unlock-dialog"
+  ],
+  "version": 1
+}

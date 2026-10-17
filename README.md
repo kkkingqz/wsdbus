@@ -12,8 +12,8 @@ daemon for Hyprland.
   (`provider` always on, `policy` optional: floating workspaces,
   minimize/restore, maximize, snapping).
 
-Status: plan 1 stage 1 (contract) is implemented; the GNOME provider is
-next. Plans, decisions and the contract (in Russian):
+Status: plan 1 stages 1 (contract) and 2 (GNOME provider) are
+implemented; integration with the consumers is next. Plans, decisions and the contract (in Russian):
 
 - [contract `Desktop1`](spec/README.md) and its
   [D-Bus interface](spec/io.github.kkkingqz.WsDbus.Desktop1.xml);
@@ -31,6 +31,7 @@ next. Plans, decisions and the contract (in Russian):
 | `crates/wsdbus-client` | zbus client: commands, `Watcher` with snapshot, gaps and reconnects; provider helpers |
 | `crates/wsdbus-fake` | fake provider and a private `dbus-daemon` for consumer tests |
 | `bin/wsdbus-ctl` | command-line client; `watch --json` for QML consumers |
+| `gnome-extension/` | GNOME Shell 50 provider, see its [README](gnome-extension/README.md) |
 
 ## Checks
 
@@ -41,7 +42,8 @@ cargo test --workspace --locked
 ```
 
 The tests start their own `dbus-daemon` and never use the session bus;
-`dbus-daemon` must be installed.
+`dbus-daemon` must be installed. The extension has GJS tests and a headless
+GNOME Shell test, see [docs/testing.md](docs/testing.md) (in Russian).
 
 ## License
 

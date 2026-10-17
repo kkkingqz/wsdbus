@@ -99,7 +99,7 @@ Hyprland — из `stableId` и подписи экземпляра.
 | Метод | Смысл |
 |---|---|
 | `Shortcut(as keys, s app)` | нажать `keys` по порядку и отпустить в обратном. Непустой `app` — только если это приложение в фокусе, иначе ничего не происходит. От 1 до 8 клавиш; имена — XKB keysym (`Control_L`, `Shift_L`, `Alt_L`, `Super_L`, `t`, `F5`, `Return`) |
-| `LaunchApp(s id)` | запустить приложение по `app.id` |
+| `LaunchApp(s id)` | запустить приложение по `app.id`; уже запущенное поставщик может вывести на передний план (GNOME: `Shell.App.activate`) |
 | `ActivateWorkspace(s id)` | перейти на стол |
 | `WindowAction(s id, s action)` | `activate`, `close`, `minimize`, `restore`, `toggle-maximize` |
 | `SetWorkspaceMode(s id, s mode)` | `tiling` или `floating`; только Hyprland с `policy` |
