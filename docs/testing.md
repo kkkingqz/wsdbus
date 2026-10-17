@@ -25,9 +25,11 @@ Flatpak читает факты, а `launch`, `key`, `shortcut` получают
 4. `wsdbus-ctl windows`; для окна: `minimize`, `restore`, `toggle-maximize`,
    `activate`, `close`.
 5. `wsdbus-ctl brightness 0.5` — яркость меняется, факт следует.
-6. `wsdbus-ctl key XF86AudioPlay press` и `release` — плеер реагирует;
-   `wsdbus-ctl shortcut --app org.gnome.Ptyxis Control_L Shift_L t` в Ptyxis
-   открывает вкладку, в другом окне — ничего.
+6. `wsdbus-ctl key XF86AudioPlay press` и `release` — плеер реагирует.
+   Сочетание уходит в окно в фокусе, а это терминал с командой, поэтому
+   нужна задержка: `sleep 3; wsdbus-ctl shortcut --app org.gnome.Ptyxis Control_L Shift_L t`
+   и за 3 секунды переключиться в Ptyxis — откроется вкладка. То же с
+   переключением в другое окно — ничего не происходит.
 7. Заблокировать экран: `watch` показывает `session.locked true`,
    `wsdbus-ctl launch org.gnome.Calculator` — код 6; после разблокировки
    нажатые клавиши не залипли.
