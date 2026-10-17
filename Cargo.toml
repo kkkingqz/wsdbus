@@ -1,0 +1,31 @@
+[workspace]
+members = ["crates/wsdbus-contract", "crates/wsdbus-client", "crates/wsdbus-fake", "bin/wsdbus-ctl"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT"
+repository = "https://github.com/kkkingqz/wsdbus"
+
+[workspace.dependencies]
+wsdbus-contract = { path = "crates/wsdbus-contract" }
+wsdbus-client = { path = "crates/wsdbus-client" }
+wsdbus-fake = { path = "crates/wsdbus-fake" }
+zbus = "5.19.0"
+zvariant = "5.15.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+thiserror = "2"
+async-io = "2.6"
+futures-lite = "2.6"
+proptest = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+cast_possible_truncation = "warn"
+cast_sign_loss = "warn"
+match_same_arms = "warn"

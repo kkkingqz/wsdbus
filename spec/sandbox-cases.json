@@ -1,0 +1,113 @@
+{
+  "rule": "no PID: unverified; .flatpak-info present: sandboxed; unreadable: unverified; cgroup with a unit app-flatpak-* or snap.*: sandboxed; cgroup unreadable or missing: unverified; otherwise trusted",
+  "cases": [
+    {
+      "name": "ordinary session process",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-org.gnome.Ptyxis-4242.scope\n"
+      },
+      "verdict": "trusted"
+    },
+    {
+      "name": "systemd user service",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/touchbar-session.service\n"
+      },
+      "verdict": "trusted"
+    },
+    {
+      "name": "flatpak by .flatpak-info",
+      "pid": true,
+      "flatpak_info": "present",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-x-1.scope\n"
+      },
+      "verdict": "sandboxed"
+    },
+    {
+      "name": "flatpak by cgroup",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-flatpak-org.mozilla.firefox-12345.scope\n"
+      },
+      "verdict": "sandboxed"
+    },
+    {
+      "name": "snap by cgroup",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/snap.firefox.firefox-0d2c6a4e.scope\n"
+      },
+      "verdict": "sandboxed"
+    },
+    {
+      "name": "cgroup v1 lines",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "12:pids:/user.slice/user-1000.slice/user@1000.service/app.slice/snap.code.code-1.scope\n1:name=systemd:/user.slice\n0::/user.slice\n"
+      },
+      "verdict": "sandboxed"
+    },
+    {
+      "name": "unit name only contains the marker",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-my-app-flatpak-tool-7.scope\n"
+      },
+      "verdict": "trusted"
+    },
+    {
+      "name": "no pid",
+      "pid": false,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice\n"
+      },
+      "verdict": "unverified"
+    },
+    {
+      "name": ".flatpak-info unreadable",
+      "pid": true,
+      "flatpak_info": "failed",
+      "cgroup": {
+        "probe": "present",
+        "text": "0::/user.slice\n"
+      },
+      "verdict": "unverified"
+    },
+    {
+      "name": "cgroup unreadable",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "failed"
+      },
+      "verdict": "unverified"
+    },
+    {
+      "name": "process exited",
+      "pid": true,
+      "flatpak_info": "absent",
+      "cgroup": {
+        "probe": "absent"
+      },
+      "verdict": "unverified"
+    }
+  ]
+}

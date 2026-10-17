@@ -1,0 +1,18 @@
+{
+  "rule": "desktop file id without .desktop; otherwise wmclass:<class>; GNOME ids starting with window: are no desktop file",
+  "cases": [
+    { "name": "desktop file", "desktop_id": "org.gnome.Nautilus.desktop", "class": "org.gnome.Nautilus", "app": "org.gnome.Nautilus" },
+    { "name": "desktop id without suffix", "desktop_id": "org.gnome.Ptyxis", "class": "org.gnome.Ptyxis", "app": "org.gnome.Ptyxis" },
+    { "name": "flatpak app", "desktop_id": "org.mozilla.firefox.desktop", "class": "firefox", "app": "org.mozilla.firefox" },
+    { "name": "snap app", "desktop_id": "firefox_firefox.desktop", "class": "firefox", "app": "firefox_firefox" },
+    { "name": "class differs from desktop id", "desktop_id": "code.desktop", "class": "Code", "app": "code" },
+    { "name": "no desktop file", "desktop_id": null, "class": "XTerm", "app": "wmclass:XTerm" },
+    { "name": "class case is kept", "desktop_id": null, "class": "steam_app_570", "app": "wmclass:steam_app_570" },
+    { "name": "gnome window without app", "desktop_id": "window:42", "class": "winbox64.exe", "app": "wmclass:winbox64.exe" },
+    { "name": "empty desktop id", "desktop_id": "", "class": "foot", "app": "wmclass:foot" },
+    { "name": "only suffix", "desktop_id": ".desktop", "class": "foot", "app": "wmclass:foot" },
+    { "name": "surrounding spaces", "desktop_id": " org.gnome.Nautilus.desktop ", "class": null, "app": "org.gnome.Nautilus" },
+    { "name": "neither", "desktop_id": null, "class": null, "app": "wmclass:" },
+    { "name": "empty class", "desktop_id": null, "class": "", "app": "wmclass:" }
+  ]
+}

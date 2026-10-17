@@ -1,0 +1,52 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  wsdbus contract v1. Bus name io.github.kkkingqz.WsDbus,
+  object /io/github/kkkingqz/WsDbus. Semantics: spec/README.md.
+-->
+<node>
+  <interface name="io.github.kkkingqz.WsDbus.Desktop1">
+    <!-- Facts snapshot: revision and every present fact. -->
+    <method name="GetState">
+      <arg name="revision" type="t" direction="out"/>
+      <arg name="facts" type="a{sv}" direction="out"/>
+    </method>
+    <!-- Windows snapshot; capability "windows". -->
+    <method name="GetWindows">
+      <arg name="revision" type="t" direction="out"/>
+      <arg name="windows" type="aa{sv}" direction="out"/>
+    </method>
+    <!-- Mutating methods: Denied for sandboxed callers. -->
+    <method name="Shortcut">
+      <arg name="keys" type="as" direction="in"/>
+      <arg name="app" type="s" direction="in"/>
+    </method>
+    <method name="LaunchApp">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="ActivateWorkspace">
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <method name="WindowAction">
+      <arg name="id" type="s" direction="in"/>
+      <arg name="action" type="s" direction="in"/>
+    </method>
+    <method name="SetWorkspaceMode">
+      <arg name="id" type="s" direction="in"/>
+      <arg name="mode" type="s" direction="in"/>
+    </method>
+    <signal name="StateChanged">
+      <arg name="revision" type="t"/>
+      <arg name="changed" type="a{sv}"/>
+      <arg name="removed" type="as"/>
+    </signal>
+    <signal name="WindowsChanged">
+      <arg name="revision" type="t"/>
+      <arg name="upserted" type="aa{sv}"/>
+      <arg name="removed" type="as"/>
+    </signal>
+    <property name="Capabilities" type="as" access="read"/>
+    <property name="Provider" type="s" access="read"/>
+    <property name="Version" type="u" access="read"/>
+  </interface>
+</node>

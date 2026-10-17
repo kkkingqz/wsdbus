@@ -1,0 +1,22 @@
+[package]
+name = "wsdbus-client"
+description = "zbus client of the wsdbus Desktop1 contract: snapshot, changes, reconnects"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+wsdbus-contract = { workspace = true, features = ["proc"] }
+zbus.workspace = true
+async-io.workspace = true
+futures-lite.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+wsdbus-fake.workspace = true
+
+[lints]
+workspace = true

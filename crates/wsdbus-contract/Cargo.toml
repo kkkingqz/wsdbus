@@ -1,0 +1,23 @@
+[package]
+name = "wsdbus-contract"
+description = "Types, wire encoding and rules of the wsdbus Desktop1 contract, without IO"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[features]
+# Reads /proc to collect sandbox evidence for a caller PID.
+proc = []
+
+[dependencies]
+zvariant.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true
